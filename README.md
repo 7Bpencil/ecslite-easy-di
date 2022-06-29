@@ -1,6 +1,6 @@
 ## Dependency injection for LeoEcsLite C# Entity Component System framework
 Old, attribute-based dependency injection for [LeoECS Lite](https://github.com/Leopotam/ecslite), originally written by [Leopotam](https://github.com/Leopotam)  
-*(Except I removed **EcsFilter** injection because you should do it manually in systems' **Init**)*
+*(Except I removed **EcsFilter** injection because the true way is to do it manually in systems' **Init**)*
 
 ### Table of content
 * [Integration to startup](#integration-to-startup)
