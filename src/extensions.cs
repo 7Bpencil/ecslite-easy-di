@@ -51,16 +51,14 @@ namespace SevenBoldPencil.EasyDi
         private static readonly MethodInfo WorldGetPoolMethod = typeof (EcsWorld).GetMethod (nameof (EcsWorld.GetPool));
         private static readonly Dictionary<Type, MethodInfo> GetPoolMethodsCache = new Dictionary<Type, MethodInfo> (256);
 
-        public static EcsSystems Inject (this EcsSystems systems, params object[] injects)
+        public static IEcsSystems Inject (this IEcsSystems systems, params object[] injects)
         {
             if (injects == null) { injects = Array.Empty<object> (); }
-            IEcsSystem[] allSystems = null;
-            var systemsCount = systems.GetAllSystems (ref allSystems);
+            var allSystems = systems.GetAllSystems();
             var shared = systems.GetShared<object> ();
             var sharedType = shared?.GetType ();
 
-            for (var i = 0; i < systemsCount; i++) {
-                var system = allSystems[i];
+            foreach (var system in allSystems) {
                 foreach (var f in system.GetType ().GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
                     // skip statics.
                     if (f.IsStatic) { continue; }
@@ -78,7 +76,7 @@ namespace SevenBoldPencil.EasyDi
             return systems;
         }
 
-        private static bool InjectWorld (FieldInfo fieldInfo, IEcsSystem system, EcsSystems systems) {
+        private static bool InjectWorld (FieldInfo fieldInfo, IEcsSystem system, IEcsSystems systems) {
             if (fieldInfo.FieldType != WorldType) {
                 return false;
             }
@@ -91,7 +89,7 @@ namespace SevenBoldPencil.EasyDi
             return true;
         }
 
-        private static bool InjectPool (FieldInfo fieldInfo, IEcsSystem system, EcsSystems systems) {
+        private static bool InjectPool (FieldInfo fieldInfo, IEcsSystem system, IEcsSystems systems) {
             if (!fieldInfo.FieldType.IsGenericType || fieldInfo.FieldType.GetGenericTypeDefinition() != PoolType) {
                 return false;
             }
